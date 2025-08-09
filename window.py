@@ -5,7 +5,7 @@ import boto3
 import signal
 import os
 
-from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QMessageBox
 from PySide6.QtCore import QThread, Signal, Qt
 from PySide6.QtGui import QKeySequence, QShortcut, QIcon
 
@@ -93,6 +93,17 @@ class Window(QMainWindow):
         self.setWindowIcon(icon)
 
         profiles = boto3.session.Session().available_profiles
+        
+        # Check if no profiles are available
+        if not profiles:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Icon.Warning)
+            msg.setWindowTitle("AWS Configuration Required")
+            msg.setText("No AWS profiles found!")
+            msg.setInformativeText("Please set up AWS configuration before using this application")
+            msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msg.exec()
+
         self.ui.aws_profile.addItems(profiles)
         self.ui.aws_region.addItems(AWS_REGIONS)
 
