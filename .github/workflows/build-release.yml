@@ -5,6 +5,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+  actions: read
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -79,17 +83,7 @@ jobs:
       id: date
       run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
-    - name: Check if tag exists
-      id: tag_exists
-      run: |
-        if git rev-parse "v0.0.1" >/dev/null 2>&1; then
-          echo "exists=true" >> $GITHUB_OUTPUT
-        else
-          echo "exists=false" >> $GITHUB_OUTPUT
-        fi
-
     - name: Create Release
-      if: steps.tag_exists.outputs.exists == 'false'
       uses: softprops/action-gh-release@v2
       with:
         tag_name: v0.0.1
@@ -116,5 +110,4 @@ jobs:
           ./aws-resource-explorer-macos/aws-resource-explorer-macos
           ./aws-resource-explorer-windows/aws-resource-explorer-windows.exe
           ./aws-resource-explorer-linux/aws-resource-explorer-linux
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
