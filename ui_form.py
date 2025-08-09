@@ -15,22 +15,20 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QHBoxLayout, QHeaderView,
-    QLabel, QMainWindow, QPushButton, QSizePolicy,
-    QSpacerItem, QStatusBar, QTableWidget, QTableWidgetItem,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QComboBox, QGridLayout, QHBoxLayout,
+    QHeaderView, QLabel, QLineEdit, QMainWindow,
+    QPushButton, QSizePolicy, QSpacerItem, QStatusBar,
+    QTableWidget, QTableWidgetItem, QWidget)
 
 class Ui_Window(object):
     def setupUi(self, Window):
         if not Window.objectName():
             Window.setObjectName(u"Window")
-        Window.resize(800, 600)
+        Window.resize(848, 434)
         self.centralwidget = QWidget(Window)
         self.centralwidget.setObjectName(u"centralwidget")
-        self.verticalLayout = QVBoxLayout(self.centralwidget)
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.gridLayout = QGridLayout(self.centralwidget)
+        self.gridLayout.setObjectName(u"gridLayout")
         self.label = QLabel(self.centralwidget)
         self.label.setObjectName(u"label")
         font = QFont()
@@ -38,69 +36,67 @@ class Ui_Window(object):
         font.setPointSize(14)
         self.label.setFont(font)
 
-        self.horizontalLayout.addWidget(self.label)
+        self.gridLayout.addWidget(self.label, 0, 1, 1, 2)
 
         self.aws_profile = QComboBox(self.centralwidget)
         self.aws_profile.setObjectName(u"aws_profile")
         self.aws_profile.setFont(font)
 
-        self.horizontalLayout.addWidget(self.aws_profile)
+        self.gridLayout.addWidget(self.aws_profile, 1, 1, 1, 2)
 
         self.label_2 = QLabel(self.centralwidget)
         self.label_2.setObjectName(u"label_2")
         self.label_2.setFont(font)
 
-        self.horizontalLayout.addWidget(self.label_2)
+        self.gridLayout.addWidget(self.label_2, 2, 1, 1, 2)
 
         self.aws_region = QComboBox(self.centralwidget)
         self.aws_region.setObjectName(u"aws_region")
         self.aws_region.setFont(font)
 
-        self.horizontalLayout.addWidget(self.aws_region)
+        self.gridLayout.addWidget(self.aws_region, 3, 1, 1, 2)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.label_3 = QLabel(self.centralwidget)
+        self.label_3.setObjectName(u"label_3")
 
-        self.horizontalLayout.addItem(self.horizontalSpacer)
+        self.gridLayout.addWidget(self.label_3, 4, 1, 1, 1)
 
-        self.status = QLabel(self.centralwidget)
-        self.status.setObjectName(u"status")
+        self.filter = QLineEdit(self.centralwidget)
+        self.filter.setObjectName(u"filter")
 
-        self.horizontalLayout.addWidget(self.status)
+        self.gridLayout.addWidget(self.filter, 5, 1, 1, 2)
 
+        self.verticalSpacer = QSpacerItem(28, 467, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.gridLayout.addItem(self.verticalSpacer, 6, 2, 1, 1)
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.load = QPushButton(self.centralwidget)
         self.load.setObjectName(u"load")
         self.load.setFont(font)
 
         self.horizontalLayout.addWidget(self.load)
 
+        self.close = QPushButton(self.centralwidget)
+        self.close.setObjectName(u"close")
+        self.close.setFont(font)
 
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.horizontalLayout.addWidget(self.close)
+
+
+        self.gridLayout.addLayout(self.horizontalLayout, 7, 1, 1, 2)
 
         self.resources = QTableWidget(self.centralwidget)
         self.resources.setObjectName(u"resources")
         self.resources.setFont(font)
 
-        self.verticalLayout.addWidget(self.resources)
-
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.horizontalLayout_2.addItem(self.horizontalSpacer_2)
-
-        self.close = QPushButton(self.centralwidget)
-        self.close.setObjectName(u"close")
-        self.close.setFont(font)
-
-        self.horizontalLayout_2.addWidget(self.close)
-
-
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.gridLayout.addWidget(self.resources, 0, 0, 8, 1)
 
         Window.setCentralWidget(self.centralwidget)
-        self.status_bar = QStatusBar(Window)
-        self.status_bar.setObjectName(u"status_bar")
-        Window.setStatusBar(self.status_bar)
+        self.statusBar = QStatusBar(Window)
+        self.statusBar.setObjectName(u"statusBar")
+        Window.setStatusBar(self.statusBar)
 
         self.retranslateUi(Window)
 
@@ -111,7 +107,7 @@ class Ui_Window(object):
         Window.setWindowTitle(QCoreApplication.translate("Window", u"Window", None))
         self.label.setText(QCoreApplication.translate("Window", u"AWS_PROFILE", None))
         self.label_2.setText(QCoreApplication.translate("Window", u"AWS_REGION", None))
-        self.status.setText(QCoreApplication.translate("Window", u"...", None))
+        self.label_3.setText(QCoreApplication.translate("Window", u"Filter", None))
         self.load.setText(QCoreApplication.translate("Window", u"Load", None))
         self.close.setText(QCoreApplication.translate("Window", u"Close", None))
     # retranslateUi

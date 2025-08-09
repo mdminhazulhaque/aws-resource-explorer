@@ -18,14 +18,3 @@ AWS_REGIONS = [
     "eu-north-1 (Stockholm)",
     "sa-east-1 (São Paulo)",
 ]
-
-# Replacements for icon mapping
-AWS_ICON_REPLACEMENTS = {
-    "eks": "elastickubernetesservice",
-    "elasticfilesystem": "efs",
-    "ecr": "elasticcontainerregistry",
-    "iam": "iamidentitycenter",
-    "payments": "billingconductor",
-    "ses": "simpleemailservice",
-    "events": "eventbridge",
-}

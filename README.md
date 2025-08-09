@@ -1,6 +1,6 @@
 # AWS Resource Explorer
 
-A modern, user-friendly desktop application built with PySide6 that provides a visual interface for exploring AWS resources across multiple regions and profiles. The application automatically fetches AWS resources using the Resource Groups Tagging API and displays them with corresponding AWS service icons.
+A modern, user-friendly desktop application built with PySide6 that provides a visual interface for exploring AWS resources across multiple regions and profiles. The application fetches AWS resources using the Resource Groups Tagging API with real-time filtering capabilities.
 
 ![AWS Resource Explorer](.media/screenshot.png)
 
@@ -13,10 +13,10 @@ A modern, user-friendly desktop application built with PySide6 that provides a v
 
 - 🔐 **Multi-Profile Support**: Switch between different AWS profiles seamlessly
 - 🌍 **Multi-Region Exploration**: Explore resources across all AWS regions
-- 🎨 **Visual Resource Display**: View resources with official AWS service icons
+- 🔍 **Real-time Filtering**: Filter resources instantly as you type
 - ⚡ **Asynchronous Loading**: Non-blocking UI with progress indicators
-- 🔄 **Auto-Icon Management**: Automatically downloads and manages AWS icons
-- 🎯 **Smart Icon Mapping**: Intelligent service-to-icon mapping with fallbacks
+- � **Complete Pagination**: Fetches ALL resources using AWS pagination
+- 🚀 **Cross-Platform**: Works on Windows, macOS, and Linux
 
 ## 🚀 Quick Start
 
@@ -24,16 +24,14 @@ A modern, user-friendly desktop application built with PySide6 that provides a v
 
 - **Python 3.9+** installed on your system
 - **AWS CLI** configured with at least one profile
-- **Git** installed and available in your PATH
 - Valid AWS credentials with permissions to use Resource Groups Tagging API
 
 ### Installation
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/mdminhazulhaque/aws-resource-explorer.git
-   cd aws-resource-explorer
-   ```
+1. **Download the repository**:
+   - Download the ZIP file from GitHub and extract it
+   - Or clone using: `git clone https://github.com/mdminhazulhaque/aws-resource-explorer.git`
+   - Navigate to the project directory: `cd aws-resource-explorer`
 
 2. **Create a virtual environment** (recommended):
    ```bash
@@ -52,6 +50,22 @@ A modern, user-friendly desktop application built with PySide6 that provides a v
    aws sts get-caller-identity
    ```
 
+### Compiling Resources & UI (Development Only)
+
+If you modify the UI or resources, you'll need to recompile them:
+
+**UI Compilation** (if you modify `form.ui`):
+```bash
+pyside6-uic form.ui -o ui_form.py
+```
+
+**Resource Compilation** (if you modify `resources.qrc` or add/change icons):
+```bash
+pyside6-rcc resources.qrc -o resources_rc.py
+```
+
+**Note**: These steps are only required if you're modifying the UI layout or resources. The generated files (`ui_form.py` and `resources_rc.py`) are already included in the repository.
+
 ### Running the Application
 
 ```bash
@@ -65,29 +79,55 @@ python window.py
 1. **Launch** the application
 2. **Select** your AWS profile from the dropdown
 3. **Choose** the target AWS region
-4. **Click Load** to fetch resources
-5. **Browse** through your AWS resources with visual icons
+4. **Click Load** to fetch resources (all resources will be loaded using pagination)
+5. **Filter resources** using the search box for real-time filtering
+6. **Browse** through your filtered AWS resources
 
-### First Run
+### Real-time Filtering
 
-On the first run, the application will:
-- Automatically clone the AWS Icons repository
-- Set up icon mapping database
-- Display progress in the status bar
+The application includes a powerful filtering feature:
+- **Instant Search**: Type in the filter box to see results immediately
+- **Case-Insensitive**: Search works regardless of letter casing
+- **Substring Matching**: Finds resources containing your search term anywhere in the ARN
+- **Clear Filter**: Delete search text to show all resources again
+
+**Filter Examples**:
+- Type `s3` to see only S3 buckets
+- Type `us-east-1` to see resources in that region
+- Type `lambda` to find Lambda functions
+- Type part of an account ID to filter by account
+
+### Keyboard Shortcuts
+
+| Platform | Key | Action |
+|----------|-----|--------|
+| **macOS/Linux** | **Cmd+Q** | Quit the application |
+| **Windows** | **Alt+F4** | Quit the application |
 
 ## 🏗️ Project Structure
 
 ```
 aws-resource-explorer/
-├── 📄 config.py               # AWS regions and service icon mappings
-├── 🎨 form.ui                 # Qt Designer UI layout file
-├── 📋 requirements.txt        # Python package dependencies
-├── 🔧 ui_form.py              # Auto-generated PySide6 UI code
+├── 📄 config.py               # AWS regions configuration
+├── 🎨 form.ui                 # Qt Designer UI layout file (source)
+├── �️ icon.png                # Application icon
+├── �📋 requirements.txt        # Python package dependencies
+├── 📦 resources.qrc           # Qt resource file (source)
+├── 🔧 resources_rc.py         # Auto-generated Python resource code (compiled from resources.qrc)
+├── 🔧 ui_form.py              # Auto-generated PySide6 UI code (compiled from form.ui)
 ├── 🐍 window.py               # Main application logic and GUI
 ├── 📚 README.md               # Project documentation
 ├── 🏗️ aws-resource-explorer.pyproject  # Qt Creator project file
 └── 🗂️ .qtcreator/            # Qt Creator configuration
 ```
+
+### Key Files
+
+- **`form.ui`**: The visual UI layout created with Qt Designer
+- **`ui_form.py`**: Python code automatically generated from `form.ui` (do not edit manually)
+- **`resources.qrc`**: Qt resource file containing application assets like icons
+- **`resources_rc.py`**: Python code automatically generated from `resources.qrc` (do not edit manually)
+- **`window.py`**: Main application logic that uses the UI and resources
 
 ## 📄 License
 
@@ -95,7 +135,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- **[AWS Icons for PlantUML](https://github.com/awslabs/aws-icons-for-plantuml)** - Official AWS icons
 - **[PySide6](https://pypi.org/project/PySide6/)** - Python Qt bindings
 - **[Boto3](https://boto3.amazonaws.com/)** - AWS SDK for Python
 - **AWS Resource Groups Tagging API** - Resource discovery service
@@ -103,9 +142,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 If you encounter any issues or have questions:
-1. Check the [Troubleshooting](#-troubleshooting) section
-2. Search existing [Issues](https://github.com/mdminhazulhaque/aws-resource-explorer/issues)
-3. Create a new issue with detailed information
+1. Search existing [Issues](https://github.com/mdminhazulhaque/aws-resource-explorer/issues)
+2. Create a new issue with detailed information
 
 ---
 
