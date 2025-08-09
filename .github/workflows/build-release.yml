@@ -1,8 +1,8 @@
 name: Build and Release
 
 on:
-  release:
-    types: [created]
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -82,10 +82,35 @@ jobs:
       id: date
       run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
-    - name: Upload Release Assets
+    - name: Generate tag
+      id: tag
+      run: echo "tag=v1.0.${{ github.run_number }}" >> $GITHUB_OUTPUT
+
+    - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: ${{ github.event.release.tag_name }}
+        tag_name: ${{ steps.tag.outputs.tag }}
+        name: AWS Resource Explorer ${{ steps.tag.outputs.tag }}
+        body: |
+          AWS Resource Explorer ${{ steps.tag.outputs.tag }}
+          
+          ## Features
+          - Browse AWS resources across profiles and regions
+          - Real-time search and filtering
+          - Pagination support for large datasets
+          - Cross-platform support (macOS, Windows, Linux)
+          - Platform-specific icons (ICO for Windows, PNG for macOS/Linux)
+          
+          ## Download
+          Choose the appropriate binary for your platform:
+          - **macOS**: aws-resource-explorer-macos
+          - **Windows**: aws-resource-explorer-windows.exe
+          - **Linux**: aws-resource-explorer-linux
+          
+          Built on ${{ steps.date.outputs.date }}
+          Build #${{ github.run_number }}
+        draft: false
+        prerelease: false
         files: |
           ./aws-resource-explorer-macos/aws-resource-explorer-macos
           ./aws-resource-explorer-windows/aws-resource-explorer-windows.exe
