@@ -29,7 +29,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.9'
 
@@ -58,7 +58,7 @@ jobs:
         mv dist/aws-resource-explorer${{ matrix.binary_ext }} dist/${{ matrix.binary_name }}${{ matrix.binary_ext }}
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.binary_name }}
         path: dist/${{ matrix.binary_name }}${{ matrix.binary_ext }}
@@ -73,7 +73,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Download all artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
 
     - name: Get current date
       id: date
@@ -89,14 +89,11 @@ jobs:
         fi
 
     - name: Create Release
-      id: create_release
       if: steps.tag_exists.outputs.exists == 'false'
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: v0.0.1
-        release_name: AWS Resource Explorer v0.0.1
+        name: AWS Resource Explorer v0.0.1
         body: |
           AWS Resource Explorer v0.0.1
           
@@ -115,36 +112,9 @@ jobs:
           Built on ${{ steps.date.outputs.date }}
         draft: false
         prerelease: false
-
-    - name: Upload macOS Binary
-      if: steps.tag_exists.outputs.exists == 'false'
-      uses: actions/upload-release-asset@v1
+        files: |
+          ./aws-resource-explorer-macos/aws-resource-explorer-macos
+          ./aws-resource-explorer-windows/aws-resource-explorer-windows.exe
+          ./aws-resource-explorer-linux/aws-resource-explorer-linux
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./aws-resource-explorer-macos/aws-resource-explorer-macos
-        asset_name: aws-resource-explorer-macos
-        asset_content_type: application/octet-stream
-
-    - name: Upload Windows Binary
-      if: steps.tag_exists.outputs.exists == 'false'
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./aws-resource-explorer-windows/aws-resource-explorer-windows.exe
-        asset_name: aws-resource-explorer-windows.exe
-        asset_content_type: application/octet-stream
-
-    - name: Upload Linux Binary
-      if: steps.tag_exists.outputs.exists == 'false'
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./aws-resource-explorer-linux/aws-resource-explorer-linux
-        asset_name: aws-resource-explorer-linux
-        asset_content_type: application/octet-stream
