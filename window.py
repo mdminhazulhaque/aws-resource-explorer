@@ -1,18 +1,18 @@
 # This Python file uses the following encoding: utf-8
 
 import sys
-import json
 import boto3
-import subprocess
-
-from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem
-from PySide6.QtCore import QThread, Signal
-from PySide6.QtGui import QIcon
-
-from ui_form import Ui_Window
+import signal
 import os
 
-from config import AWS_REGIONS, AWS_ICON_REPLACEMENTS
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem
+from PySide6.QtCore import QThread, Signal, Qt
+from PySide6.QtGui import QKeySequence, QShortcut, QIcon
+
+from ui_form import Ui_Window
+import resources_rc  # Import the compiled resource file
+
+from config import AWS_REGIONS
 
 class ResourceLoaderThread(QThread):
     resources_loaded = Signal(list)
@@ -25,54 +25,53 @@ class ResourceLoaderThread(QThread):
     def run(self):
         boto3.setup_default_session(profile_name=self.profile_name)
         client = boto3.client('resourcegroupstaggingapi', region_name=self.region_name)
+        
+        all_resources = []
+        pagination_token = None
+        
         try:
-            resources = client.get_resources()['ResourceTagMappingList']
+            while True:
+                # Prepare API call parameters
+                params = {}
+                if pagination_token:
+                    params['PaginationToken'] = pagination_token
+                
+                # Make the API call
+                response = client.get_resources(**params)
+                
+                # Add resources from this page
+                page_resources = response.get('ResourceTagMappingList', [])
+                all_resources.extend(page_resources)
+                
+                # Check if there are more pages
+                pagination_token = response.get('PaginationToken')
+                if not pagination_token:
+                    break
+                    
+                print(f"Fetched {len(page_resources)} resources, total so far: {len(all_resources)}")
+                
         except Exception as e:
-            print(e)
-            resources = []
-        self.resources_loaded.emit(resources)
-
-class CloneRepoThread(QThread):
-    progress = Signal(str)
-    finished = Signal(bool)
-
-    def __init__(self, repo_url, clone_dir):
-        super().__init__()
-        self.repo_url = repo_url
-        self.clone_dir = clone_dir
-        os.makedirs(clone_dir, exist_ok=True)
-
-    def run(self):
-        try:
-            # Check if the repository already exists
-            self.progress.emit("Checking if repository already exists...")
-            result = subprocess.run(['git', '-C', self.clone_dir, 'status'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            if result.returncode == 0:
-                self.progress.emit("Repository already cloned: awslabs/aws-icons-for-plantuml")
-                self.finished.emit(True)
-                return
-
-            # Clone the repository if it doesn't exist
-            self.progress.emit("Cloning repository...")
-            subprocess.run(['git', 'clone', '--depth', '1', self.repo_url, self.clone_dir], check=True)
-            self.progress.emit("Successfully cloned repository: awslabs/aws-icons-for-plantuml")
-            self.finished.emit(True)
-        except subprocess.CalledProcessError as e:
-            self.progress.emit(f"An error occurred: {e}")
-            self.finished.emit(False)
+            print(f"Error fetching resources: {e}")
+            
+        print(f"Total resources fetched: {len(all_resources)}")
+        self.resources_loaded.emit(all_resources)
 
 class Window(QMainWindow):
     def __init__(self, parent=None):
-        self.AWS_ICONS_REPO = 'https://github.com/awslabs/aws-icons-for-plantuml'
-        if os.name == 'nt':
-            self.AWS_ICONS_PATH = os.path.join(os.getenv('APPDATA'), "aws-icons-for-plantuml")
-        else:
-            self.AWS_ICONS_PATH = os.path.join(os.path.expanduser("~"), ".aws-icons-for-plantuml")
-
         super().__init__(parent)
         self.ui = Ui_Window()
         self.ui.setupUi(self)
+        
+        # Set window title after UI setup to ensure it's not overridden
         self.setWindowTitle("AWS Resource Explorer")
+        
+        # Set window icon from QRC resources with fallback
+        icon = QIcon(":/icon.png")
+        if icon.isNull():
+            # Fallback to file system if QRC resource fails
+            icon = QIcon("icon.png")
+        
+        self.setWindowIcon(icon)
 
         profiles = boto3.session.Session().available_profiles
         self.ui.aws_profile.addItems(profiles)
@@ -81,36 +80,83 @@ class Window(QMainWindow):
         self.ui.load.clicked.connect(self.load_resources)
         self.ui.close.clicked.connect(self.close)
 
+        # Clear table when profile or region changes
+        self.ui.aws_profile.currentTextChanged.connect(self.clear_table)
+        self.ui.aws_region.currentTextChanged.connect(self.clear_table)
+
         self.resource_loader = None
+        self.all_resources = []  # Store all resources for filtering
 
-        self.clone_repo_thread = None
-        self.clone_repo_thread = CloneRepoThread(self.AWS_ICONS_REPO, self.AWS_ICONS_PATH)
-        self.clone_repo_thread.progress.connect(self.on_clone_update)
-        self.clone_repo_thread.finished.connect(self.on_clone_finished)
-        self.clone_repo_thread.start()
+        # Connect filter box to search functionality
+        self.ui.filter.textChanged.connect(self.filter_resources)
 
-    def on_clone_update(self, message):
-        self.statusBar().showMessage(message)
+        # Setup keyboard shortcuts
+        self.setup_shortcuts()
+        
+        # Setup signal handlers
+        self.setup_signal_handlers()
 
-    def on_clone_finished(self, success):
-        if success:
-            self.statusBar().showMessage("Successfully cloned repository: awslabs/aws-icons-for-plantuml")
-            self.icondb = self.load_icondb()
-        else:
-            self.statusBar().showMessage("Failed to clone repository: awslabs/aws-icons-for-plantuml")
+    def setup_signal_handlers(self):
+        """Setup signal handlers for graceful shutdown"""
+        signal.signal(signal.SIGTERM, self.signal_handler)
+        signal.signal(signal.SIGINT, self.signal_handler)
 
-    def load_icondb(self):
-        with open(f"{self.AWS_ICONS_PATH}/dist/aws-icons-structurizr-theme.json", "r") as f:
-            data = json.load(f)
-            icons = {}
-            for element in data["elements"]:
-                if "icon" in element:
-                    tag = element["tag"].lower()
-                    icons[tag] = element["icon"]
-                    # print("Loaded icon for:", tag)
-            return icons
+    def signal_handler(self, signum, frame):
+        """Handle system signals for graceful shutdown"""
+        print(f"Received signal {signum}, closing application...")
+        self.close()
+
+    def setup_shortcuts(self):
+        """Setup keyboard shortcuts for the application"""
+        # Platform-specific quit shortcuts
+        if os.name == 'nt':  # Windows
+            self.quit_shortcut = QShortcut(QKeySequence("Alt+F4"), self)
+        else:  # macOS and Linux
+            self.quit_shortcut = QShortcut(QKeySequence("Cmd+Q"), self)
+        
+        self.quit_shortcut.activated.connect(self.close)
+
+    def clear_table(self):
+        """Clear the resources table and filter"""
+        self.ui.resources.clear()
+        self.ui.resources.setRowCount(0)
+        if hasattr(self, 'ui') and hasattr(self.ui, 'filter'):
+            self.ui.filter.clear()
+        self.all_resources = []
+        self.statusBar().showMessage("Select profile and region, then click Load")
+
+    def set_ui_enabled(self, enabled):
+        """Enable or disable UI controls during loading"""
+        self.ui.aws_profile.setEnabled(enabled)
+        self.ui.aws_region.setEnabled(enabled)
+        self.ui.filter.setEnabled(enabled)
+        self.ui.load.setEnabled(enabled)
+
+    def closeEvent(self, event):
+        """Handle window close event and cleanup threads"""
+        if self.resource_loader and self.resource_loader.isRunning():
+            # Re-enable UI controls before closing
+            self.set_ui_enabled(True)
+            # Wait for the thread to finish before closing
+            self.resource_loader.wait(3000)  # Wait up to 3 seconds
+            if self.resource_loader.isRunning():
+                # If still running, terminate it
+                self.resource_loader.terminate()
+                self.resource_loader.wait()
+        event.accept()
 
     def load_resources(self):
+        # Prevent starting multiple threads
+        if self.resource_loader and self.resource_loader.isRunning():
+            return
+            
+        # Disable UI controls during loading
+        self.set_ui_enabled(False)
+            
+        # Clear filter box and resources
+        self.ui.filter.clear()
+        self.all_resources = []
+                        
         self.ui.resources.clear()
         self.ui.resources.horizontalHeader().setVisible(False)
         self.ui.resources.horizontalHeader().setStretchLastSection(True)
@@ -120,10 +166,28 @@ class Window(QMainWindow):
 
         self.resource_loader = ResourceLoaderThread(profile_name, region_name)
         self.resource_loader.resources_loaded.connect(self.on_resources_loaded)
+        self.resource_loader.finished.connect(self.on_thread_finished)
         self.resource_loader.start()
-        self.ui.status.setText("Loading ...")
+        self.statusBar().showMessage("Loading ...")
+
+    def on_thread_finished(self):
+        """Handle thread cleanup when finished"""
+        # Re-enable UI controls
+        self.set_ui_enabled(True)
+        
+        if self.resource_loader:
+            self.resource_loader.deleteLater()
+            self.resource_loader = None
 
     def on_resources_loaded(self, resources):
+        # Store all resources for filtering
+        self.all_resources = resources
+        
+        # Display all resources initially
+        self.display_resources(resources)
+
+    def display_resources(self, resources):
+        """Display the given list of resources in the table"""
         self.ui.resources.setRowCount(len(resources))
         self.ui.resources.setColumnCount(1)
         self.ui.resources.setHorizontalHeaderLabels(["Resource ARN"])
@@ -135,18 +199,43 @@ class Window(QMainWindow):
             item = QTableWidgetItem(arn)
             self.ui.resources.setItem(i, 0, item)
 
-            service = arn.split(":")[2]
-            service = AWS_ICON_REPLACEMENTS.get(service, service)
+        self.statusBar().showMessage(f"Done! ({len(resources)} resources)")
 
-            icon = self.icondb.get(service)
-            icon_path = f"{self.AWS_ICONS_PATH}/dist/{icon}"
-            if icon:
-                item.setIcon(QIcon(icon_path))
-
-        self.ui.status.setText("Done!")
+    def filter_resources(self):
+        """Filter resources based on search text"""
+        if not hasattr(self, 'all_resources') or not self.all_resources:
+            return
+            
+        search_text = self.ui.filter.text().lower().strip()
+        
+        if not search_text:
+            # Show all resources if search is empty
+            filtered_resources = self.all_resources
+        else:
+            # Filter resources containing the search text
+            filtered_resources = [
+                resource for resource in self.all_resources
+                if search_text in resource['ResourceARN'].lower()
+            ]
+        
+        self.display_resources(filtered_resources)
 
 if __name__ == "__main__":    
     app = QApplication(sys.argv)
+    
+    # Set application properties (this affects dock/taskbar name)
+    app.setApplicationName("AWS Resource Explorer")
+    app.setApplicationDisplayName("AWS Resource Explorer")
+    app.setOrganizationName("Self")
+    app.setApplicationVersion("1.0")
+    
+    # Set application icon (affects all windows and dock/taskbar)
+    app_icon = QIcon(":/icon.png")
+    if app_icon.isNull():
+        app_icon = QIcon("icon.png")
+    
+    app.setWindowIcon(app_icon)
+    
     window = Window()
     window.show()
 

@@ -18,6 +18,26 @@
 .#*
 *.*#
 core
+
+# Python specific
+__pycache__/
+*.py[cod]
+*$py.class
+build/
+dist/
+*.egg-info/
+.venv/
+venv/
+env/
+
+# PyInstaller
+*.spec.bak
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
 !core/
 tags
 .DS_Store
