@@ -17,12 +17,6 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="1" colspan="2">
      <widget class="QLabel" name="label">
-      <property name="font">
-       <font>
-        <family>Fira Code</family>
-        <pointsize>14</pointsize>
-       </font>
-      </property>
       <property name="text">
        <string>AWS_PROFILE</string>
       </property>
@@ -30,22 +24,10 @@
     </item>
     <item row="1" column="1" colspan="2">
      <widget class="QComboBox" name="aws_profile">
-      <property name="font">
-       <font>
-        <family>Fira Code</family>
-        <pointsize>14</pointsize>
-       </font>
-      </property>
      </widget>
     </item>
     <item row="2" column="1" colspan="2">
      <widget class="QLabel" name="label_2">
-      <property name="font">
-       <font>
-        <family>Fira Code</family>
-        <pointsize>14</pointsize>
-       </font>
-      </property>
       <property name="text">
        <string>AWS_REGION</string>
       </property>
@@ -53,12 +35,6 @@
     </item>
     <item row="3" column="1" colspan="2">
      <widget class="QComboBox" name="aws_region">
-      <property name="font">
-       <font>
-        <family>Fira Code</family>
-        <pointsize>14</pointsize>
-       </font>
-      </property>
      </widget>
     </item>
     <item row="4" column="1">
@@ -88,12 +64,6 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QPushButton" name="load">
-        <property name="font">
-         <font>
-          <family>Fira Code</family>
-          <pointsize>14</pointsize>
-         </font>
-        </property>
         <property name="text">
          <string>Load</string>
         </property>
@@ -101,12 +71,6 @@
       </item>
       <item>
        <widget class="QPushButton" name="close">
-        <property name="font">
-         <font>
-          <family>Fira Code</family>
-          <pointsize>14</pointsize>
-         </font>
-        </property>
         <property name="text">
          <string>Close</string>
         </property>
@@ -116,12 +80,6 @@
     </item>
     <item row="0" column="0" rowspan="8">
      <widget class="QTableWidget" name="resources">
-      <property name="font">
-       <font>
-        <family>Fira Code</family>
-        <pointsize>14</pointsize>
-       </font>
-      </property>
      </widget>
     </item>
    </layout>

@@ -31,28 +31,21 @@ class Ui_Window(object):
         self.gridLayout.setObjectName(u"gridLayout")
         self.label = QLabel(self.centralwidget)
         self.label.setObjectName(u"label")
-        font = QFont()
-        font.setFamilies([u"Fira Code"])
-        font.setPointSize(14)
-        self.label.setFont(font)
 
         self.gridLayout.addWidget(self.label, 0, 1, 1, 2)
 
         self.aws_profile = QComboBox(self.centralwidget)
         self.aws_profile.setObjectName(u"aws_profile")
-        self.aws_profile.setFont(font)
 
         self.gridLayout.addWidget(self.aws_profile, 1, 1, 1, 2)
 
         self.label_2 = QLabel(self.centralwidget)
         self.label_2.setObjectName(u"label_2")
-        self.label_2.setFont(font)
 
         self.gridLayout.addWidget(self.label_2, 2, 1, 1, 2)
 
         self.aws_region = QComboBox(self.centralwidget)
         self.aws_region.setObjectName(u"aws_region")
-        self.aws_region.setFont(font)
 
         self.gridLayout.addWidget(self.aws_region, 3, 1, 1, 2)
 
@@ -74,13 +67,11 @@ class Ui_Window(object):
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.load = QPushButton(self.centralwidget)
         self.load.setObjectName(u"load")
-        self.load.setFont(font)
 
         self.horizontalLayout.addWidget(self.load)
 
         self.close = QPushButton(self.centralwidget)
         self.close.setObjectName(u"close")
-        self.close.setFont(font)
 
         self.horizontalLayout.addWidget(self.close)
 
@@ -89,7 +80,6 @@ class Ui_Window(object):
 
         self.resources = QTableWidget(self.centralwidget)
         self.resources.setObjectName(u"resources")
-        self.resources.setFont(font)
 
         self.gridLayout.addWidget(self.resources, 0, 0, 8, 1)
 
