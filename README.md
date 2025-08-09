@@ -20,59 +20,30 @@ A modern, user-friendly desktop application built with PySide6 that provides a v
 
 ## 🚀 Quick Start
 
-### Prerequisites
-
-- **Python 3.9+** installed on your system
-- **AWS CLI** configured with at least one profile
-- Valid AWS credentials with permissions to use Resource Groups Tagging API
-
-### Installation
-
-1. **Download the repository**:
-   - Download the ZIP file from GitHub and extract it
-   - Or clone using: `git clone https://github.com/mdminhazulhaque/aws-resource-explorer.git`
-   - Navigate to the project directory: `cd aws-resource-explorer`
-
-2. **Create a virtual environment** (recommended):
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Verify AWS configuration**:
-   ```bash
-   aws configure list-profiles
-   aws sts get-caller-identity
-   ```
-
-### Compiling Resources & UI (Development Only)
-
-If you modify the UI or resources, you'll need to recompile them:
-
-**UI Compilation** (if you modify `form.ui`):
 ```bash
+git clone https://github.com/mdminhazulhaque/aws-resource-explorer.git
+cd aws-resource-explorer
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
 pyside6-uic form.ui -o ui_form.py
-```
-
-**Resource Compilation** (if you modify `resources.qrc` or add/change icons):
-```bash
 pyside6-rcc resources.qrc -o resources_rc.py
-```
-
-**Note**: These steps are only required if you're modifying the UI layout or resources. The generated files (`ui_form.py` and `resources_rc.py`) are already included in the repository.
-
-### Running the Application
-
-```bash
 python window.py
 ```
 
-## 📖 Usage Guide
+## � Download
+
+Pre-built binaries are available for immediate use without setting up Python:
+
+- **Windows**: `aws-resource-explorer-windows.exe`
+- **macOS**: `aws-resource-explorer-macos`
+- **Linux**: `aws-resource-explorer-linux`
+
+👉 **[Download from Releases](https://github.com/mdminhazulhaque/aws-resource-explorer/releases)**
+
+Simply download the binary for your platform and run it directly. No Python installation required!
+
+## �📖 Usage Guide
 
 ### Basic Workflow
 
