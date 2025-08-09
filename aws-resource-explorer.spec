@@ -1,6 +1,13 @@
 # -*- mode: python ; coding: utf-8 -*-
+import sys
 
 block_cipher = None
+
+# Use appropriate icon format for each platform
+if sys.platform == 'win32':
+    icon_file = 'icon.ico'
+else:
+    icon_file = 'icon.png'
 
 a = Analysis(
     ['window.py'],
@@ -8,6 +15,7 @@ a = Analysis(
     binaries=[],
     datas=[
         ('icon.png', '.'),
+        ('icon.ico', '.'),
         ('resources_rc.py', '.')
     ],
     hiddenimports=[
@@ -45,5 +53,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='icon.png'
+    icon=icon_file
 )
