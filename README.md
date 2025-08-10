@@ -2,7 +2,7 @@
 
 A modern, user-friendly desktop application built with PySide6 that provides a visual interface for exploring AWS resources across multiple regions and profiles. The application fetches AWS resources using the Resource Groups Tagging API with real-time filtering capabilities.
 
-![AWS Resource Explorer](.media/screenshot.png)
+![AWS Resource Explorer](.media/screenshot-win.png)
 
 ![Python](https://img.shields.io/badge/python-3.9+-blue.svg)
 ![PySide6](https://img.shields.io/badge/PySide6-6.0+-green.svg)
@@ -74,31 +74,6 @@ The application includes a powerful filtering feature:
 |----------|-----|--------|
 | **macOS/Linux** | **Cmd+Q** | Quit the application |
 | **Windows** | **Alt+F4** | Quit the application |
-
-## 🏗️ Project Structure
-
-```
-aws-resource-explorer/
-├── 📄 config.py               # AWS regions configuration
-├── 🎨 form.ui                 # Qt Designer UI layout file (source)
-├── �️ icon.png                # Application icon
-├── �📋 requirements.txt        # Python package dependencies
-├── 📦 resources.qrc           # Qt resource file (source)
-├── 🔧 resources_rc.py         # Auto-generated Python resource code (compiled from resources.qrc)
-├── 🔧 ui_form.py              # Auto-generated PySide6 UI code (compiled from form.ui)
-├── 🐍 window.py               # Main application logic and GUI
-├── 📚 README.md               # Project documentation
-├── 🏗️ aws-resource-explorer.pyproject  # Qt Creator project file
-└── 🗂️ .qtcreator/            # Qt Creator configuration
-```
-
-### Key Files
-
-- **`form.ui`**: The visual UI layout created with Qt Designer
-- **`ui_form.py`**: Python code automatically generated from `form.ui` (do not edit manually)
-- **`resources.qrc`**: Qt resource file containing application assets like icons
-- **`resources_rc.py`**: Python code automatically generated from `resources.qrc` (do not edit manually)
-- **`window.py`**: Main application logic that uses the UI and resources
 
 ## 📄 License
 
