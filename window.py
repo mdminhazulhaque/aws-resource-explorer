@@ -107,6 +107,13 @@ class Window(QMainWindow):
         self.ui.aws_profile.addItems(profiles)
         self.ui.aws_region.addItems(AWS_REGIONS)
 
+        # Set initial splitter position
+        self.ui.splitter.setSizes([500, 200])
+
+        # Setup progress bar
+        self.ui.progressBar.setRange(0, 0)  # Indeterminate
+        self.ui.progressBar.setVisible(False)
+
         self.ui.load.clicked.connect(self.load_resources)
         self.ui.close.clicked.connect(self.close)
 
@@ -157,16 +164,17 @@ class Window(QMainWindow):
 
     def set_ui_enabled(self, enabled):
         """Enable or disable UI controls during loading"""
-        self.ui.aws_profile.setEnabled(enabled)
-        self.ui.aws_region.setEnabled(enabled)
-        self.ui.filter.setEnabled(enabled)
+        self.ui.groupBox.setEnabled(enabled)
+        self.ui.groupBox_2.setEnabled(enabled)
         self.ui.load.setEnabled(enabled)
 
     def closeEvent(self, event):
         """Handle window close event and cleanup threads"""
         if self.resource_loader and self.resource_loader.isRunning():
-            # Re-enable UI controls before closing
+            # Re-enable UI controls and hide progress bar before closing
             self.set_ui_enabled(True)
+            self.ui.progressBar.setVisible(False)
+
             # Wait for the thread to finish before closing
             self.resource_loader.wait(3000)  # Wait up to 3 seconds
             if self.resource_loader.isRunning():
@@ -180,8 +188,9 @@ class Window(QMainWindow):
         if self.resource_loader and self.resource_loader.isRunning():
             return
             
-        # Disable UI controls during loading
+        # Disable UI controls and show progress bar
         self.set_ui_enabled(False)
+        self.ui.progressBar.setVisible(True)
             
         # Clear filter box and resources
         self.ui.filter.clear()
@@ -202,8 +211,9 @@ class Window(QMainWindow):
 
     def on_thread_finished(self):
         """Handle thread cleanup when finished"""
-        # Re-enable UI controls
+        # Re-enable UI controls and hide progress bar
         self.set_ui_enabled(True)
+        self.ui.progressBar.setVisible(False)
         
         if self.resource_loader:
             self.resource_loader.deleteLater()
