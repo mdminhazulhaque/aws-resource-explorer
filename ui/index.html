@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AWS Resource Explorer</title>
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <header>
+    <div id="banner" hidden>
+      No AWS profiles found. Please configure <code>~/.aws/credentials</code>
+      or <code>~/.aws/config</code> before using this application.
+    </div>
+    <div class="controls">
+      <label>Profile <select id="profile"></select></label>
+      <label>Region <select id="region"></select></label>
+      <button id="load">Load</button>
+    </div>
+    <div class="filter-row">
+      <input id="filter" type="search" placeholder="Filter by ARN substring…" autocomplete="off">
+      <div id="facets"></div>
+    </div>
+  </header>
+  <main>
+    <table>
+      <thead><tr><th id="arn-header" title="Click to sort">Resource ARN</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </main>
+  <footer id="status">Loading UI…</footer>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

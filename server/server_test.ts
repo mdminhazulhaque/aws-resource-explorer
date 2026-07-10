@@ -48,3 +48,10 @@ Deno.test("GET /api/resources streams SSE progress and done events", async () =>
   assert(text.includes("event: done\n"));
   assert(text.includes("arn:aws:sqs:us-east-1:123:q"));
 });
+
+Deno.test("GET / serves the UI index page", async () => {
+  const handler = createHandler(stubDeps([]));
+  const resp = await handler(new Request("http://localhost/"));
+  assertEquals(resp.status, 200);
+  assert((await resp.text()).includes("AWS Resource Explorer"));
+});
