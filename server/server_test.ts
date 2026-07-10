@@ -55,3 +55,10 @@ Deno.test("GET / serves the UI index page", async () => {
   assertEquals(resp.status, 200);
   assert((await resp.text()).includes("AWS Resource Explorer"));
 });
+
+Deno.test("requests with a non-local Host are rejected", async () => {
+  const handler = createHandler(stubDeps([]));
+  const resp = await handler(new Request("http://evil.example.com/api/profiles"));
+  assertEquals(resp.status, 403);
+  await resp.body?.cancel();
+});

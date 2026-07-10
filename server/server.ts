@@ -18,6 +18,9 @@ const uiRoot = `${import.meta.dirname}/../ui`;
 export function createHandler(deps: HandlerDeps) {
   return async (req: Request): Promise<Response> => {
     const url = new URL(req.url);
+    if (url.hostname !== "127.0.0.1" && url.hostname !== "localhost") {
+      return new Response("Forbidden", { status: 403 });
+    }
     if (url.pathname === "/api/profiles") {
       return Response.json(await deps.listProfiles());
     }
