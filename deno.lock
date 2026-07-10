@@ -1,0 +1,54 @@
+{
+  "version": "5",
+  "specifiers": {
+    "jsr:@std/assert@1": "1.0.19",
+    "jsr:@std/internal@^1.0.12": "1.0.14",
+    "npm:@smithy/shared-ini-file-loader@4": "4.6.7"
+  },
+  "jsr": {
+    "@std/assert@1.0.19": {
+      "integrity": "eaada96ee120cb980bc47e040f82814d786fe8162ecc53c91d8df60b8755991e",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
+    "@std/internal@1.0.14": {
+      "integrity": "291516b3d4c35024d6ffbc0a9df5bf4c64116e05b50012cf846710152d2ffdf7"
+    }
+  },
+  "npm": {
+    "@smithy/core@3.29.2": {
+      "integrity": "sha512-DXUk6yU0C1Q1tYvJh1VCtl8QOBcSoZpKwjTPkxT6A4MUQYHvgeKGByL8mrEdxnvhdf9nq5GyzmRb5n/vPgu3Lw==",
+      "dependencies": [
+        "@smithy/types",
+        "tslib"
+      ]
+    },
+    "@smithy/shared-ini-file-loader@4.6.7": {
+      "integrity": "sha512-HuFyahA9L+fPKTBJ16Ep3XFXDhQKXDepWQknzkem7ptEqetsmw4wnYgZec67ohbZiJDrCGeMMqV+Tzn32Zg78w==",
+      "dependencies": [
+        "@smithy/core",
+        "tslib"
+      ]
+    },
+    "@smithy/types@4.16.0": {
+      "integrity": "sha512-aVUabzlBBmY0PfvVgLKQSOGFIL5/7R54JE3uD9a5Ay/jSED61SkuAcCYENNXJzYUvJ1NPrWO0P+rAXHCkbBUKw==",
+      "dependencies": [
+        "tslib"
+      ]
+    },
+    "tslib@2.8.1": {
+      "integrity": "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="
+    }
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@std/assert@1",
+      "jsr:@std/http@1",
+      "jsr:@webview/webview@0.9",
+      "npm:@aws-sdk/client-resource-groups-tagging-api@3",
+      "npm:@aws-sdk/credential-providers@3",
+      "npm:@smithy/shared-ini-file-loader@4"
+    ]
+  }
+}
