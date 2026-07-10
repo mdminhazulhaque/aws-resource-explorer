@@ -93,3 +93,7 @@ CMakeLists.txt.user*
 *.exe
 
 aws-resource-explorer.pyproject.user
+
+# local operational files with credentials
+arw-*.yaml
+arw.sh

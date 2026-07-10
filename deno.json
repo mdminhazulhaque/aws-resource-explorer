@@ -1,0 +1,15 @@
+{
+  "tasks": {
+    "start": "deno run -A --unstable-ffi main.ts",
+    "serve": "deno run --allow-net --allow-read --allow-env server/server.ts",
+    "test": "deno test -A"
+  },
+  "imports": {
+    "@webview/webview": "jsr:@webview/webview@^0.9",
+    "@std/http": "jsr:@std/http@^1",
+    "@std/assert": "jsr:@std/assert@^1",
+    "@aws-sdk/client-resource-groups-tagging-api": "npm:@aws-sdk/client-resource-groups-tagging-api@^3",
+    "@aws-sdk/credential-providers": "npm:@aws-sdk/credential-providers@^3",
+    "@smithy/shared-ini-file-loader": "npm:@smithy/shared-ini-file-loader@^4"
+  }
+}
