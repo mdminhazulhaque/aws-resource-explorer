@@ -5,7 +5,7 @@ regions, built with [Deno](https://deno.com) and a native OS webview.
 Resources are fetched with the AWS Resource Groups Tagging API and filtered
 instantly in the UI.
 
-![AWS Resource Explorer](.media/screenshot-win.png)
+![AWS Resource Explorer](.media/screenshot-deno.png)
 
 ## Features
 
